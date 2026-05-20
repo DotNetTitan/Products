@@ -6,16 +6,10 @@ using Products.Application.Features.Products.Responses;
 
 namespace Products.Application.Features.Products.GetProductById;
 
-public sealed class GetProductByIdHandler
+public sealed class GetProductByIdHandler(IApplicationDbContext dbContext, IMemoryCache memoryCache)
 {
-    private readonly IApplicationDbContext _dbContext;
-    private readonly IMemoryCache _memoryCache;
-
-    public GetProductByIdHandler(IApplicationDbContext dbContext, IMemoryCache memoryCache)
-    {
-        _dbContext = dbContext;
-        _memoryCache = memoryCache;
-    }
+    private readonly IApplicationDbContext _dbContext = dbContext;
+    private readonly IMemoryCache _memoryCache = memoryCache;
 
     public async Task<ProductResponse?> Handle(GetProductByIdQuery query, CancellationToken cancellationToken)
     {

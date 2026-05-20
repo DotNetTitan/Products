@@ -6,16 +6,10 @@ using Products.Application.Common.Caching;
 
 namespace Products.Application.Features.Products.UpdateProduct;
 
-public sealed class UpdateProductHandler
+public sealed class UpdateProductHandler(IApplicationDbContext dbContext, IMemoryCache memoryCache)
 {
-    private readonly IApplicationDbContext _dbContext;
-    private readonly IMemoryCache _memoryCache;
-
-    public UpdateProductHandler(IApplicationDbContext dbContext, IMemoryCache memoryCache)
-    {
-        _dbContext = dbContext;
-        _memoryCache = memoryCache;
-    }
+    private readonly IApplicationDbContext _dbContext = dbContext;
+    private readonly IMemoryCache _memoryCache = memoryCache;
 
     public async Task<bool> Handle(UpdateProductCommand command, CancellationToken cancellationToken)
     {

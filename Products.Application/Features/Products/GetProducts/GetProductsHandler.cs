@@ -5,18 +5,11 @@ using Products.Application.Features.Products.Responses;
 
 namespace Products.Application.Features.Products.GetProducts;
 
-public sealed class GetProductsHandler
+public sealed class GetProductsHandler(IApplicationDbContext dbContext)
 {
-    private readonly IApplicationDbContext _dbContext;
+    private readonly IApplicationDbContext _dbContext = dbContext;
 
-    public GetProductsHandler(IApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
-    public async Task<PagedResponse<ProductResponse>> Handle(
-        GetProductsQuery query,
-        CancellationToken cancellationToken)
+    public async Task<PagedResponse<ProductResponse>> Handle(GetProductsQuery query, CancellationToken cancellationToken)
     {
         IQueryable<Domain.Entities.Product> productsQuery =
             _dbContext.Products.AsNoTracking();

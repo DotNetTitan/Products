@@ -3,14 +3,9 @@ using Products.Domain.Entities;
 
 namespace Products.Application.Features.Products.CreateProduct
 {
-    public sealed class CreateProductHandler
+    public sealed class CreateProductHandler(IApplicationDbContext dbContext)
     {
-        private readonly IApplicationDbContext _dbContext;
-
-        public CreateProductHandler(IApplicationDbContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
+        private readonly IApplicationDbContext _dbContext = dbContext;
 
         public async Task<CreateProductResponse> Handle(CreateProductCommand command, CancellationToken cancellationToken)
         {

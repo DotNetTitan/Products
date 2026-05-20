@@ -6,16 +6,10 @@ using Products.Application.Common.Caching;
 
 namespace Products.Application.Features.Products.DeleteProduct;
 
-public sealed class DeleteProductHandler
+public sealed class DeleteProductHandler(IApplicationDbContext dbContext, IMemoryCache memoryCache)
 {
-    private readonly IApplicationDbContext _dbContext;
-    private readonly IMemoryCache _memoryCache;
-
-    public DeleteProductHandler(IApplicationDbContext dbContext, IMemoryCache memoryCache)
-    {
-        _dbContext = dbContext;
-        _memoryCache = memoryCache;
-    }
+    private readonly IApplicationDbContext _dbContext = dbContext;
+    private readonly IMemoryCache _memoryCache = memoryCache;
 
     public async Task<bool> Handle(DeleteProductCommand command, CancellationToken cancellationToken)
     {
