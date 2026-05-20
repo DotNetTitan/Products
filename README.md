@@ -66,7 +66,7 @@ Products/
 │   ├── Data/
 │   │   └── ApplicationDbContext.cs    # EF Core DbContext
 │   ├── Migrations/                    # EF Core migrations
-│   ├── DependencyInjection.cs          # DI configuration
+│   ├── DependencyInjection.cs         # DI configuration
 │   └── Products.Infrastructure.csproj
 └── Products.slnx
 ```
@@ -141,14 +141,6 @@ The project uses **SQL Server** with Entity Framework Core for data access.
   }
 }
 ```
-
-### Migrations
-
-The project includes three migrations:
-1. **InitialCreate** - Creates the Products table with all required fields
-2. **AddSoftDelete** - Adds soft delete functionality (IsDeleted, DeletedAtUtc)
-3. **AddUpdatedAtUtc** - Ensures UpdatedAtUtc field is properly tracked
-
 ## Getting Started
 
 ### Prerequisites
