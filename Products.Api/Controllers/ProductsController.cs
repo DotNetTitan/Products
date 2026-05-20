@@ -38,7 +38,7 @@ public sealed class ProductsController : ControllerBase
     {
         var result = await _createProductHandler.Handle(command, cancellationToken);
 
-        return CreatedAtAction(nameof(Create), new { id = result.Id }, result);
+        return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
     }
 
     [HttpGet]
