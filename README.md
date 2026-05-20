@@ -7,10 +7,10 @@ A RESTful API for managing products built with .NET 8.0 using Clean Architecture
 This project follows **Clean Architecture** principles with four distinct layers:
 
 ```
-Products.Api           # Web API layer (Controllers, Middlewares, Filters)
-Products.Application   # Application layer (CQRS Handlers, Commands, Queries, Validators)
-Products.Domain        # Domain layer (Entities, Interfaces)
-Products.Infrastructure# Infrastructure layer (EF Core, Database, Configurations)
+Products.Api            # Web API layer (Controllers, Middlewares, Filters)
+Products.Application    # Application layer (CQRS Handlers, Commands, Queries, Validators)
+Products.Domain         # Domain layer (Entities, Interfaces)
+Products.Infrastructure # Infrastructure layer (EF Core, Database, Configurations)
 ```
 
 ## Technology Stack
@@ -248,9 +248,3 @@ dotnet run --project Products.Api
 ```bash
 dotnet publish -c Release -o ./publish
 ```
-
-## Additional Notes
-
-- The project uses **minimal API** principles but with traditional controllers for better structure
-- **Soft delete** ensures data integrity - deleted products are hidden but can be restored if needed
-- **Paged responses** include pagination metadata (page number, page size, total count, total pages)
