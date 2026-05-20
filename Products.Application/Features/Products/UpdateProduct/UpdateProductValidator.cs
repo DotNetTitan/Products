@@ -2,7 +2,7 @@
 
 namespace Products.Application.Features.Products.UpdateProduct;
 
-public sealed class UpdateProductValidator: AbstractValidator<UpdateProductCommand>
+public sealed class UpdateProductValidator : AbstractValidator<UpdateProductCommand>
 {
     public UpdateProductValidator()
     {
