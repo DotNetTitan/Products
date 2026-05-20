@@ -22,14 +22,14 @@ namespace Products.Domain.Entities
         {
             Id = Guid.NewGuid();
 
-            UpdateDetails(name, description);
+            SetDetails(name, description);
 
             SetPrice(price);
 
             SetStockQuantity(stockQuantity);
         }
 
-        public void UpdateDetails(string name, string description)
+        public void SetDetails(string name, string description)
         {
             Name = name;
             Description = description;

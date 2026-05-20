@@ -40,8 +40,7 @@ public sealed class GetProductsHandler
             _ => productsQuery.OrderByDescending(x => x.CreatedAtUtc)
         };
 
-        var totalCount =
-            await productsQuery.CountAsync(cancellationToken);
+        var totalCount = await productsQuery.CountAsync(cancellationToken);
 
         var items = await productsQuery
             .Skip((query.Page - 1) * query.PageSize)

@@ -7,15 +7,12 @@ namespace Products.Application.Features.Products.CreateProduct
     {
         private readonly IApplicationDbContext _dbContext;
 
-        public CreateProductHandler(
-            IApplicationDbContext dbContext)
+        public CreateProductHandler(IApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public async Task<CreateProductResponse> Handle(
-            CreateProductCommand command,
-            CancellationToken cancellationToken)
+        public async Task<CreateProductResponse> Handle(CreateProductCommand command, CancellationToken cancellationToken)
         {
             var product = new Product(
                 command.Name,
@@ -25,11 +22,9 @@ namespace Products.Application.Features.Products.CreateProduct
 
             _dbContext.Products.Add(product);
 
-            await _dbContext.SaveChangesAsync(
-                cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return new CreateProductResponse(
-                product.Id);
+            return new CreateProductResponse(product.Id);
         }
     }
 }
