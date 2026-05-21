@@ -18,8 +18,8 @@ public sealed class ProductsController : ControllerBase
     private readonly UpdateProductHandler _updateProductHandler;
     private readonly DeleteProductHandler _deleteProductHandler;
 
-    public ProductsController(CreateProductHandler createProductHandler,
-
+    public ProductsController(
+        CreateProductHandler createProductHandler,
         GetProductsHandler getProductsHandler,
         GetProductByIdHandler getProductByIdHandler,
         UpdateProductHandler updateProductHandler,

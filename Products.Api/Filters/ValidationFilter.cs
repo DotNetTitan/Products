@@ -4,13 +4,11 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Products.Api.Filters;
 
-public sealed class ValidationFilter<T>
-    : IAsyncActionFilter
+public sealed class ValidationFilter<T> : IAsyncActionFilter
 {
     private readonly IValidator<T> _validator;
 
-    public ValidationFilter(
-        IValidator<T> validator)
+    public ValidationFilter(IValidator<T> validator)
     {
         _validator = validator;
     }
@@ -26,22 +24,25 @@ public sealed class ValidationFilter<T>
 
         if (model is null)
         {
-            await next();
+            context.Result = new BadRequestObjectResult(
+                new ProblemDetails
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "Validation Error",
+                    Detail = $"Expected a request body of type {typeof(T).Name}."
+                });
 
             return;
         }
 
-        var validationResult =
-            await _validator.ValidateAsync(
-                model,
-                context.HttpContext.RequestAborted);
+        var validationResult = await _validator.ValidateAsync(
+            model,
+            context.HttpContext.RequestAborted);
 
         if (!validationResult.IsValid)
         {
-            context.Result =
-                new BadRequestObjectResult(
-                    new ValidationProblemDetails(
-                        validationResult.ToDictionary()));
+            context.Result = new BadRequestObjectResult(
+                new ValidationProblemDetails(validationResult.ToDictionary()));
 
             return;
         }

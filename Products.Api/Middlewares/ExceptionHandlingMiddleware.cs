@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 
 namespace Products.Api.Middlewares;
 
@@ -16,8 +15,7 @@ public sealed class ExceptionHandlingMiddleware
         _logger = logger;
     }
 
-    public async Task InvokeAsync(
-        HttpContext context)
+    public async Task InvokeAsync(HttpContext context)
     {
         try
         {
@@ -31,16 +29,6 @@ public sealed class ExceptionHandlingMiddleware
                 context,
                 StatusCodes.Status400BadRequest,
                 "Bad Request",
-                ex.Message);
-        }
-        catch (InvalidOperationException ex)
-        {
-            _logger.LogWarning(ex, ex.Message);
-
-            await WriteProblemDetails(
-                context,
-                StatusCodes.Status400BadRequest,
-                "Operation Failed",
                 ex.Message);
         }
         catch (Exception ex)
@@ -62,9 +50,7 @@ public sealed class ExceptionHandlingMiddleware
         string detail)
     {
         context.Response.StatusCode = statusCode;
-
-        context.Response.ContentType =
-            "application/problem+json";
+        context.Response.ContentType = "application/problem+json";
 
         var problemDetails = new ProblemDetails
         {
@@ -73,8 +59,6 @@ public sealed class ExceptionHandlingMiddleware
             Detail = detail
         };
 
-        var json = JsonSerializer.Serialize(problemDetails);
-
-        await context.Response.WriteAsync(json);
+        await context.Response.WriteAsJsonAsync(problemDetails);
     }
 }

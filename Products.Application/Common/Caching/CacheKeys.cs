@@ -2,8 +2,8 @@
 
 public static class CacheKeys
 {
-    public static string ProductById(Guid Id)
-    {
-        return $"product:{Id}";
-    }
+        public static string ProductById(Guid id)
+        {
+            return $"product:{id}";
+        }
 }
