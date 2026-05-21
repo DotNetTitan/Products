@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
-namespace Products.Api.Middleware;
+namespace Products.Api.Middlewares;
 
 public sealed class ExceptionHandlingMiddleware
 {

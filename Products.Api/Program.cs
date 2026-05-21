@@ -1,5 +1,6 @@
 using Products.Api.Filters;
 using Products.Api.Middlewares;
+using Products.Application;
 using Products.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);

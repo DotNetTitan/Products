@@ -1,4 +1,4 @@
-﻿using Products.Api.Middleware;
+﻿using Products.Api.Middlewares;
 
 namespace Products.Api.Middlewares
 {
