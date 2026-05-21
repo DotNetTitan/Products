@@ -21,11 +21,11 @@ builder.Services.AddMemoryCache();
 
 var app = builder.Build();
 
+app.UseGlobalExceptionHandling();
+
 app.UseSwagger();
 
 app.UseSwaggerUI();
-
-app.UseGlobalExceptionHandling();
 
 app.MapControllers();
 
