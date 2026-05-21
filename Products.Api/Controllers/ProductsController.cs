@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Products.Api.Filters;
 using Products.Application.Features.Products.CreateProduct;
 using Products.Application.Features.Products.DeleteProduct;
 using Products.Application.Features.Products.GetProductById;
 using Products.Application.Features.Products.GetProducts;
 using Products.Application.Features.Products.UpdateProduct;
+using Products.Domain.Enums;
 
 namespace Products.Api.Controllers;
 
@@ -33,6 +35,7 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = nameof(Role.Admin))]
     [ServiceFilter(typeof(ValidationFilter<CreateProductCommand>))]
     public async Task<IActionResult> Create([FromBody] CreateProductCommand command, CancellationToken cancellationToken)
     {
@@ -66,6 +69,7 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize(Roles = nameof(Role.Admin))]
     [ServiceFilter(typeof(ValidationFilter<UpdateProductCommand>))]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProductCommand command, CancellationToken cancellationToken)
     {
@@ -85,6 +89,7 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize(Roles = nameof(Role.Admin))]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         var command = new DeleteProductCommand(id);
