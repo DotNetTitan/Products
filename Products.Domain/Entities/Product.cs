@@ -66,35 +66,5 @@ namespace Products.Domain.Entities
 
             DeletedAtUtc = DateTimeOffset.UtcNow;
         }
-
-        public void IncreaseStock(int quantity)
-        {
-            if (quantity <= 0)
-            {
-                throw new ArgumentException("Invalid quantity");
-            }
-
-            StockQuantity += quantity;
-        }
-
-        public void DecreaseStock(int quantity)
-        {
-            if (quantity <= 0)
-            {
-                throw new ArgumentException("Invalid quantity");
-            }
-
-            if (StockQuantity < quantity)
-            {
-                throw new InvalidOperationException("Insufficient stock");
-            }
-
-            StockQuantity -= quantity;
-        }
-
-        public override string ToString()
-        {
-            return $"Product: {Name}, Price: {Price:C}, Stock: {StockQuantity}";
-        }
     }
 }
