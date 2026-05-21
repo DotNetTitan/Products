@@ -24,14 +24,7 @@ public sealed class ValidationFilter<T> : IAsyncActionFilter
 
         if (model is null)
         {
-            context.Result = new BadRequestObjectResult(
-                new ProblemDetails
-                {
-                    Status = StatusCodes.Status400BadRequest,
-                    Title = "Validation Error",
-                    Detail = $"Expected a request body of type {typeof(T).Name}."
-                });
-
+            await next();
             return;
         }
 
