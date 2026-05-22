@@ -9,35 +9,34 @@ using Products.Application.Features.Products.GetProducts;
 using Products.Application.Features.Products.Responses;
 using Products.Application.Features.Products.UpdateProduct;
 
-namespace Products.Application
+namespace Products.Application;
+
+public static class DependencyInjection
 {
-    public static class DependencyInjection
+    public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        public static IServiceCollection AddApplication(this IServiceCollection services)
-        {
-            services.AddValidatorsFromAssemblyContaining<CreateProductValidator>();
+        services.AddValidatorsFromAssemblyContaining<CreateProductValidator>();
 
-            services.AddScoped<
-                ICommandHandler<CreateProductCommand, CreateProductResponse>,
-                CreateProductHandler>();
+        services.AddScoped<
+            ICommandHandler<CreateProductCommand, CreateProductResponse>,
+            CreateProductHandler>();
 
-            services.AddScoped<
-                ICommandHandler<UpdateProductCommand, bool>,
-                UpdateProductHandler>();
+        services.AddScoped<
+            ICommandHandler<UpdateProductCommand, bool>,
+            UpdateProductHandler>();
 
-            services.AddScoped<
-                ICommandHandler<DeleteProductCommand, bool>,
-                DeleteProductHandler>();
+        services.AddScoped<
+            ICommandHandler<DeleteProductCommand, bool>,
+            DeleteProductHandler>();
 
-            services.AddScoped<
-                IQueryHandler<GetProductByIdQuery, ProductResponse?>,
-                GetProductByIdHandler>();
+        services.AddScoped<
+            IQueryHandler<GetProductByIdQuery, ProductResponse?>,
+            GetProductByIdHandler>();
 
-            services.AddScoped<
-                IQueryHandler<GetProductsQuery, PagedResponse<ProductResponse>>,
-                GetProductsHandler>();
+        services.AddScoped<
+            IQueryHandler<GetProductsQuery, PagedResponse<ProductResponse>>,
+            GetProductsHandler>();
 
-            return services;
-        }
+        return services;
     }
 }

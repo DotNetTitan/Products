@@ -1,13 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Products.Domain.Entities;
 
-namespace Products.Application.Abstractions
-{
-    public interface IApplicationDbContext
-    {
-        DbSet<Product> Products { get; }
+namespace Products.Application.Abstractions;
 
-        Task<int> SaveChangesAsync(
-            CancellationToken cancellationToken);
-    }
+public interface IApplicationDbContext
+{
+    DbSet<Product> Products { get; }
+
+    Task<int> SaveChangesAsync(
+        CancellationToken cancellationToken);
 }

@@ -5,26 +5,25 @@ using Products.Application.Abstractions;
 using Products.Infrastructure.Data;
 using Products.Infrastructure.Services;
 
-namespace Products.Infrastructure
+namespace Products.Infrastructure;
+
+public static class DependencyInjection
 {
-    public static class DependencyInjection
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
-        public static IServiceCollection AddInfrastructure(
-            this IServiceCollection services,
-            IConfiguration configuration)
+        services.AddDbContext<ApplicationDbContext>(options =>
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-            {
-                options.UseSqlServer(
-                    configuration.GetConnectionString("DefaultConnection"));
-            });
+            options.UseSqlServer(
+                configuration.GetConnectionString("DefaultConnection"));
+        });
 
-            services.AddScoped<IApplicationDbContext>(
-            provider => provider.GetRequiredService<ApplicationDbContext>());
+        services.AddScoped<IApplicationDbContext>(
+        provider => provider.GetRequiredService<ApplicationDbContext>());
 
-            services.AddScoped<ICacheService, CacheService>();
+        services.AddScoped<ICacheService, CacheService>();
 
-            return services;
-        }
+        return services;
     }
 }
