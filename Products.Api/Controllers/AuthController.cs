@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using Products.Api.Auth.Interfaces;
 using Products.Api.Auth.Login;
 using Products.Api.Filters;
 
@@ -9,9 +10,9 @@ namespace Products.Api.Controllers;
 [Route("api/auth")]
 public sealed class AuthController : ControllerBase
 {
-    private readonly LoginService _loginService;
+    private readonly ILoginService _loginService;
 
-    public AuthController(LoginService loginService)
+    public AuthController(ILoginService loginService)
     {
         _loginService = loginService;
     }

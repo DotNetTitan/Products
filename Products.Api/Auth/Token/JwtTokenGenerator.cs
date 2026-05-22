@@ -1,18 +1,21 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Products.Api.Auth.Interfaces;
+using Products.Api.Options;
+using Products.Domain.Entities;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.IdentityModel.Tokens;
-using Products.Domain.Entities;
 
 namespace Products.Api.Auth.Token;
 
-public sealed class JwtTokenGenerator
+public sealed class JwtTokenGenerator : IJwtTokenGenerator
 {
-    private readonly IConfiguration _configuration;
+    private readonly JwtOptions _options;
 
-    public JwtTokenGenerator(IConfiguration configuration)
+    public JwtTokenGenerator(IOptions<JwtOptions> options)
     {
-        _configuration = configuration;
+        _options = options.Value;
     }
 
     public string GenerateToken(User user)
@@ -33,8 +36,7 @@ public sealed class JwtTokenGenerator
         };
 
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(
-                _configuration["Jwt:Key"]!));
+            Encoding.UTF8.GetBytes(_options.Key));
 
         var credentials =
             new SigningCredentials(
@@ -42,10 +44,10 @@ public sealed class JwtTokenGenerator
                 SecurityAlgorithms.HmacSha256);
 
         var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
+            issuer: _options.Issuer,
+            audience: _options.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(int.Parse(_configuration["Jwt:ExpiryMinutes"]!)),
+            expires: DateTime.UtcNow.AddMinutes(_options.ExpiryMinutes),
             signingCredentials: credentials);
 
         return new JwtSecurityTokenHandler()

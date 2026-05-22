@@ -11,6 +11,9 @@ public sealed class ApplicationDbSeeder
 
     private readonly IPasswordHasher<User> _passwordHasher;
 
+    private const string AdminEmail = "admin@products.com";
+    private const string AdminPassword = "Admin123!";
+
     public ApplicationDbSeeder(ApplicationDbContext dbContext, IPasswordHasher<User> passwordHasher)
     {
         _dbContext = dbContext;
@@ -21,21 +24,20 @@ public sealed class ApplicationDbSeeder
     public async Task SeedAsync()
     {
         var existingAdmin = await _dbContext.Users
-            .AnyAsync(x => x.Email == "admin@products.com");
+            .AnyAsync(x => x.Email == AdminEmail);
 
         if (existingAdmin)
         {
             return;
         }
 
-        var tempAdminUser = new User("admin@products.com", string.Empty, Role.Admin);
-
-        var passwordHash = _passwordHasher.HashPassword(tempAdminUser, "Admin123!");
+        var passwordHash = _passwordHasher
+            .HashPassword(new User(AdminEmail, string.Empty, Role.Admin), AdminPassword);
 
         var adminUser = new User(
-            tempAdminUser.Email,
+            AdminEmail,
             passwordHash,
-            tempAdminUser.Role);
+            Role.Admin);
 
         _dbContext.Users.Add(adminUser);
 

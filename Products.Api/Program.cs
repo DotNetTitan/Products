@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using Products.Api;
 using Products.Api.Filters;
 using Products.Api.Middlewares;
+using Products.Api.Options;
 using Products.Application;
 using Products.Infrastructure;
 using Products.Infrastructure.Data;
@@ -93,6 +94,12 @@ builder.Services.AddApplication();
 
 builder.Services.AddApi();
 
+var jwtSection = builder.Configuration.GetSection(JwtOptions.SectionName);
+
+builder.Services.Configure<JwtOptions>(jwtSection);
+
+var jwtOptions = jwtSection.Get<JwtOptions>()!;
+
 builder.Services
     .AddAuthentication(
         JwtBearerDefaults.AuthenticationScheme)
@@ -109,22 +116,17 @@ builder.Services
 
                 ValidateIssuerSigningKey = true,
 
-                ValidIssuer =
-                    builder.Configuration["Jwt:Issuer"],
+                ValidIssuer = jwtOptions.Issuer,
 
-                ValidAudience =
-                    builder.Configuration["Jwt:Audience"],
+                ValidAudience = jwtOptions.Audience,
 
                 IssuerSigningKey =
                     new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(
-                            builder.Configuration["Jwt:Key"]!))
+                        Encoding.UTF8.GetBytes(jwtOptions.Key))
             };
     });
 
 builder.Services.AddAuthorization();
-
-builder.Services.AddScoped(typeof(ValidationFilter<>));
 
 builder.Services.AddMemoryCache();
 

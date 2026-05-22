@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using Products.Api.Auth.Interfaces;
 using Products.Api.Auth.Login;
 using Products.Api.Auth.Token;
 using Products.Api.Filters;
@@ -15,11 +16,11 @@ namespace Products.Api
 
             services.AddScoped(typeof(ValidationFilter<>));
 
-            services.AddScoped<IPasswordHasher<User>,PasswordHasher<User>>();
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
-            services.AddScoped<JwtTokenGenerator>();
+            services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 
-            services.AddScoped<LoginService>();
+            services.AddScoped<ILoginService, LoginService>();
 
             return services;
         }
