@@ -24,7 +24,7 @@ Products.Infrastructure # Infrastructure layer (EF Core, Database, Configuration
 | Validation | FluentValidation |
 | API Documentation | Swagger (Swashbuckle) |
 | Caching | In-Memory Cache via `ICacheService` abstraction |
-| Authentication | Azure AD JWT Bearer |
+| Authentication | API Key (`X-API-Key` header) |
 | Logging | Serilog (structured logging to console) |
 | Testing | xUnit, NSubstitute, FluentAssertions |
 
@@ -35,7 +35,7 @@ Products/
 ├── src/
 │   ├── Products.Api/
 │   │   ├── Auth/
-│   │   │   └── AuthenticationExtensions.cs   # Azure AD JWT config
+│   │   │   └── ApiKeyAuthenticationHandler.cs # API key validation handler
 │   │   ├── Controllers/
 │   │   │   └── ProductsController.cs          # REST endpoints for products
 │   │   ├── Filters/
@@ -104,7 +104,7 @@ Products/
 - **Caching Abstraction** - `ICacheService` decouples application from `IMemoryCache`, allowing swap to Redis/Distributed cache
 - **FluentValidation** - Declarative validation with generic `ValidationFilter<T>`
 - **Global Exception Handling** - Centralized error handling with RFC 7807 ProblemDetails
-- **Azure AD Authentication** - JWT Bearer token authentication
+- **API Key Authentication** - Validated via `X-API-Key` header
 - **Serilog Logging** - Structured request logging with duration tracking
 - **Soft Delete** - Products are marked as deleted rather than physically removed (global query filter)
 - **Auditable Entities** - Automatic creation and update timestamps via `SaveChanges` override
@@ -113,7 +113,7 @@ Products/
 
 ## API Endpoints
 
-All endpoints require Azure AD JWT Bearer authentication.
+All endpoints require an API key passed via the `X-API-Key` header.
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -230,62 +230,27 @@ Response: `204 No Content`
 
 ## Authentication
 
-The API uses **Azure AD JWT Bearer authentication**. All endpoints require a valid access token.
-
-### Azure AD App Registration
-
-1. Go to [Azure Portal](https://portal.azure.com) → **Microsoft Entra ID** → **App registrations** → **New registration**
-2. Set:
-   - **Name**: `Products API`
-   - **Supported account types**: `Accounts in this organizational directory only` (single tenant)
-   - **Redirect URI**: (optional, only needed if using auth code flow)
-3. After creation, note the **Application (client) ID** and **Directory (tenant) ID**
-4. Go to **Expose an API** → **Add a scope**:
-   - Scope name: `access_as_user`
-   - Who can consent: `Admins and users`
-   - Admin consent display name: `Access Products API`
-   - Admin consent description: `Allows accessing the Products API`
-5. Go to **Manifest** and ensure `accessTokenAcceptedVersion` is set to `2`
-
-### Client Application (for testing)
-
-1. Create another app registration for the client (e.g., a Postman or SPA client)
-2. Go to **API permissions** → **Add a permission** → **My APIs** → select `Products API` → select `access_as_user`
-3. Grant admin consent
+The API uses **API key authentication**. All endpoints require a valid API key sent via the `X-API-Key` header.
 
 ### Configuration
 
 In `appsettings.json`:
 ```json
-"AzureAd": {
-  "Instance": "https://login.microsoftonline.com/",
-  "TenantId": "",
-  "ClientId": ""
+"ApiKey": {
+  "Key": "your-api-key-here"
 }
 ```
 
-For local development, set values via .NET User Secrets:
+For local development, set the key via .NET User Secrets:
 ```bash
-dotnet user-secrets set "AzureAd:TenantId" "your-tenant-id"
-dotnet user-secrets set "AzureAd:ClientId" "your-client-id"
+dotnet user-secrets set "ApiKey:Key" "your-generated-api-key"
 ```
 
-### Getting a Token
+### Using the API Key
 
-Using MSAL (e.g., with a daemon app or Postman):
-
+Include the key in all requests:
 ```
-POST https://login.microsoftonline.com/{tenant-id}/oauth2/v2.0/token
-
-client_id={client-id}
-scope=api://{client-id}/access_as_user
-client_secret={client-secret}
-grant_type=client_credentials
-```
-
-Include the token in requests:
-```
-Authorization: Bearer {access-token}
+X-API-Key: your-api-key
 ```
 
 ## Database
@@ -325,8 +290,7 @@ dotnet user-secrets set "ConnectionStrings:DefaultConnection" "your-connection-s
 2. **Update secrets**
    ```bash
    dotnet user-secrets init --project src/Products.Api
-   dotnet user-secrets set "AzureAd:TenantId" "your-tenant-id"
-   dotnet user-secrets set "AzureAd:ClientId" "your-client-id"
+   dotnet user-secrets set "ApiKey:Key" "your-api-key"
    dotnet user-secrets set "ConnectionStrings:DefaultConnection" "your-connection-string"
    ```
 
@@ -385,8 +349,7 @@ If you extend the pipeline to deploy, add these secrets in GitHub → **Settings
 | Secret | Description |
 |--------|-------------|
 | `AZURE_WEBAPP_PUBLISH_PROFILE` | Azure App Service publish profile |
-| `AZURE_AD_TENANT_ID` | Azure AD tenant ID |
-| `AZURE_AD_CLIENT_ID` | Azure AD client ID |
+| `API_KEY__KEY` | API key for authentication |
 | `CONNECTION_STRINGS__DEFAULT_CONNECTION` | SQL Server connection string |
 
 ## Configuration
@@ -404,13 +367,13 @@ If you extend the pipeline to deploy, add these secrets in GitHub → **Settings
   "ConnectionStrings": {
     "DefaultConnection": "Server=localhost\\SQLEXPRESS;Database=ProductsDb;Trusted_Connection=True;TrustServerCertificate=True"
   },
-  "AzureAd": {
-    "Instance": "https://login.microsoftonline.com/"
+  "ApiKey": {
+    "Key": ""
   }
 }
 ```
 
-Sensitive values (connection strings, Azure AD credentials) should be stored in User Secrets, environment variables, or Azure Key Vault.
+Sensitive values (connection strings, API keys) should be stored in User Secrets, environment variables, or Azure Key Vault.
 
 ### Building and Running
 

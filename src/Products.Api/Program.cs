@@ -1,7 +1,7 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using Products.Api;
-using Products.Api.Auth;
 using Products.Api.Middlewares;
 using Products.Application;
 using Products.Infrastructure;
@@ -30,15 +30,13 @@ builder.Services.AddSwaggerGen(options =>
         });
 
     options.AddSecurityDefinition(
-        "Bearer",
+        "ApiKey",
         new OpenApiSecurityScheme
         {
-            Name = "Authorization",
-            Type = SecuritySchemeType.Http,
-            Scheme = "bearer",
-            BearerFormat = "JWT",
+            Name = "X-API-Key",
+            Type = SecuritySchemeType.ApiKey,
             In = ParameterLocation.Header,
-            Description = "Enter Azure AD access token"
+            Description = "Enter API key"
         });
 
     options.AddSecurityRequirement(
@@ -50,7 +48,7 @@ builder.Services.AddSwaggerGen(options =>
                     Reference = new OpenApiReference
                     {
                         Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
+                        Id = "ApiKey"
                     }
                 },
                 Array.Empty<string>()
@@ -68,7 +66,10 @@ builder.Services.AddApi();
 
 builder.Services.AddMemoryCache();
 
-builder.Services.AddAzureAdAuthentication(builder.Configuration);
+builder.Services
+    .AddAuthentication(Products.Api.Auth.ApiKeyAuthenticationHandler.SchemeName)
+    .AddScheme<AuthenticationSchemeOptions, Products.Api.Auth.ApiKeyAuthenticationHandler>(
+        Products.Api.Auth.ApiKeyAuthenticationHandler.SchemeName, null);
 
 builder.Services.AddAuthorization();
 
