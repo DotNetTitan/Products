@@ -1,22 +1,23 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using Products.Application.Abstractions;
 using Products.Application.Common.Caching;
 using Products.Application.Features.Products.Responses;
 
 namespace Products.Application.Features.Products.GetProductById;
 
-public sealed class GetProductByIdHandler(IApplicationDbContext dbContext, IMemoryCache memoryCache)
+public sealed class GetProductByIdHandler(IApplicationDbContext dbContext, ICacheService cache)
     : IQueryHandler<GetProductByIdQuery, ProductResponse?>
 {
     private readonly IApplicationDbContext _dbContext = dbContext;
-    private readonly IMemoryCache _memoryCache = memoryCache;
+    private readonly ICacheService _cache = cache;
 
     public async Task<ProductResponse?> Handle(GetProductByIdQuery query, CancellationToken cancellationToken)
     {
         var cacheKey = CacheKeys.ProductById(query.Id);
 
-        if (_memoryCache.TryGetValue(cacheKey, out ProductResponse? cachedProduct))
+        var cachedProduct = await _cache.GetAsync<ProductResponse>(cacheKey, cancellationToken);
+
+        if (cachedProduct is not null)
         {
             return cachedProduct;
         }
@@ -38,7 +39,7 @@ public sealed class GetProductByIdHandler(IApplicationDbContext dbContext, IMemo
             return null;
         }
 
-        _memoryCache.Set(cacheKey, product, CacheDurations.Product);
+        await _cache.SetAsync(cacheKey, product, CacheDurations.Product, cancellationToken);
 
         return product;
     }

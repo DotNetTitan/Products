@@ -26,8 +26,7 @@ public sealed class GetProductsQueryValidator : AbstractValidator<GetProductsQue
             return true;
         }
 
-        return sortBy.ToLower() is
-            "name" or
-            "price";
+        return string.Equals(sortBy, "name", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(sortBy, "price", StringComparison.OrdinalIgnoreCase);
     }
 }

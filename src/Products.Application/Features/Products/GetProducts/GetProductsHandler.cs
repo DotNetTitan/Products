@@ -18,7 +18,8 @@ public sealed class GetProductsHandler(IApplicationDbContext dbContext)
         if (!string.IsNullOrWhiteSpace(query.Search))
         {
             productsQuery = productsQuery.Where(x =>
-                x.Name.Contains(query.Search));
+                x.Name.Contains(query.Search) ||
+                x.Description.Contains(query.Search));
         }
 
         productsQuery = query.SortBy?.ToLower() switch

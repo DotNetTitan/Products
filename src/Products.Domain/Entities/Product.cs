@@ -31,6 +31,16 @@ namespace Products.Domain.Entities
 
         public void SetDetails(string name, string description)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException("Name cannot be empty");
+            }
+
+            if (string.IsNullOrWhiteSpace(description))
+            {
+                throw new ArgumentException("Description cannot be empty");
+            }
+
             Name = name;
             Description = description;
         }

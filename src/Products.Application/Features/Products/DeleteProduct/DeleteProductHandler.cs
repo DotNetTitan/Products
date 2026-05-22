@@ -1,15 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Memory;
 using Products.Application.Abstractions;
 using Products.Application.Common.Caching;
 
 namespace Products.Application.Features.Products.DeleteProduct;
 
-public sealed class DeleteProductHandler(IApplicationDbContext dbContext, IMemoryCache memoryCache)
+public sealed class DeleteProductHandler(IApplicationDbContext dbContext, ICacheService cache)
     : ICommandHandler<DeleteProductCommand, bool>
 {
     private readonly IApplicationDbContext _dbContext = dbContext;
-    private readonly IMemoryCache _memoryCache = memoryCache;
+    private readonly ICacheService _cache = cache;
 
     public async Task<bool> Handle(DeleteProductCommand command, CancellationToken cancellationToken)
     {
@@ -25,7 +24,7 @@ public sealed class DeleteProductHandler(IApplicationDbContext dbContext, IMemor
 
         await _dbContext.SaveChangesAsync(cancellationToken);
 
-        _memoryCache.Remove(CacheKeys.ProductById(product.Id));
+        await _cache.RemoveAsync(CacheKeys.ProductById(product.Id), cancellationToken);
 
         return true;
     }

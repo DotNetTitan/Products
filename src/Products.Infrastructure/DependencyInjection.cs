@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Products.Application.Abstractions;
 using Products.Infrastructure.Data;
+using Products.Infrastructure.Services;
 
 namespace Products.Infrastructure
 {
@@ -20,6 +21,8 @@ namespace Products.Infrastructure
 
             services.AddScoped<IApplicationDbContext>(
             provider => provider.GetRequiredService<ApplicationDbContext>());
+
+            services.AddScoped<ICacheService, CacheService>();
 
             return services;
         }
