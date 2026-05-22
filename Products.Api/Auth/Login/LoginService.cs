@@ -1,20 +1,20 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Products.Api.Auth.Token;
+using Products.Application.Abstractions;
 using Products.Domain.Entities;
-using Products.Infrastructure.Data;
 
 namespace Products.Api.Auth.Login;
 
 public sealed class LoginService
 {
-    private readonly ApplicationDbContext _dbContext;
+    private readonly IApplicationDbContext _dbContext;
 
     private readonly IPasswordHasher<User> _passwordHasher;
 
     private readonly JwtTokenGenerator _jwtTokenGenerator;
 
-    public LoginService(ApplicationDbContext dbContext, IPasswordHasher<User> passwordHasher, JwtTokenGenerator jwtTokenGenerator)
+    public LoginService(IApplicationDbContext dbContext, IPasswordHasher<User> passwordHasher, JwtTokenGenerator jwtTokenGenerator)
     {
         _dbContext = dbContext;
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Products.Api.Auth.Login;
 using Products.Api.Filters;
 
@@ -16,6 +17,7 @@ public sealed class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
+    [EnableRateLimiting("Login")]
     [ServiceFilter(typeof(ValidationFilter<LoginRequest>))]
     public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {

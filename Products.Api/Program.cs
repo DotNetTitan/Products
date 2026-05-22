@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Products.Api;
@@ -8,6 +9,7 @@ using Products.Application;
 using Products.Infrastructure;
 using Products.Infrastructure.Data;
 using System.Text;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +62,29 @@ builder.Services.AddSwaggerGen(options =>
         });
 });
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("Login", opt =>
+    {
+        opt.PermitLimit = 5;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        opt.QueueLimit = 0;
+    });
+
+    options.OnRejected = async (context, cancellationToken) =>
+    {
+        context.HttpContext.Response.StatusCode = 429;
+        context.HttpContext.Response.ContentType = "application/problem+json";
+        await context.HttpContext.Response.WriteAsJsonAsync(new
+        {
+            Title = "Too Many Requests",
+            Status = 429,
+            Detail = "Rate limit exceeded. Try again later."
+        }, cancellationToken);
+    };
+});
+
 builder.Services.AddControllers();
 
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -110,6 +135,8 @@ app.UseGlobalExceptionHandling();
 app.UseSwagger();
 
 app.UseSwaggerUI();
+
+app.UseRateLimiter();
 
 app.UseAuthentication();
 
