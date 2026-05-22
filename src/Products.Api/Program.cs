@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.OpenApi.Models;
 using Products.Api;
+using Products.Api.Auth;
 using Products.Api.Middlewares;
 using Products.Application;
 using Products.Infrastructure;
@@ -20,6 +21,34 @@ builder.Services.AddSwaggerGen(options =>
             Title = "Products API",
             Version = "v1"
         });
+
+    options.AddSecurityDefinition(
+        "Bearer",
+        new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description = "Enter Azure AD access token"
+        });
+
+    options.AddSecurityRequirement(
+        new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                Array.Empty<string>()
+            }
+        });
 });
 
 builder.Services.AddControllers();
@@ -32,12 +61,20 @@ builder.Services.AddApi();
 
 builder.Services.AddMemoryCache();
 
+builder.Services.AddAzureAdAuthentication(builder.Configuration);
+
+builder.Services.AddAuthorization();
+
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<ApplicationDbContext>();
 
 var app = builder.Build();
 
 app.UseGlobalExceptionHandling();
+
+app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.UseSwagger();
 

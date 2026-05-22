@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Products.Api.Filters;
 using Products.Application.Abstractions;
 using Products.Application.Common.Pagination;
@@ -36,6 +37,7 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     [ServiceFilter(typeof(ValidationFilter<CreateProductCommand>))]
     public async Task<IActionResult> Create([FromBody] CreateProductCommand command, CancellationToken cancellationToken)
     {
@@ -45,6 +47,7 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     [ServiceFilter(typeof(ValidationFilter<GetProductsQuery>))]
     public async Task<IActionResult> Get([FromQuery] GetProductsQuery query, CancellationToken cancellationToken)
     {
@@ -54,6 +57,7 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
+    [Authorize]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
     {
         var query = new GetProductByIdQuery(id);
@@ -69,6 +73,7 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize]
     [ServiceFilter(typeof(ValidationFilter<UpdateProductCommand>))]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProductCommand command, CancellationToken cancellationToken)
     {
@@ -88,6 +93,7 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
+    [Authorize]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         var command = new DeleteProductCommand(id);
