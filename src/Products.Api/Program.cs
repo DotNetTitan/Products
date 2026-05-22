@@ -6,9 +6,16 @@ using Products.Api.Middlewares;
 using Products.Application;
 using Products.Infrastructure;
 using Products.Infrastructure.Data;
+using Serilog;
 using System.Text.Json;
 
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog();
 
 builder.Services.AddEndpointsApiExplorer();
 
@@ -69,6 +76,8 @@ builder.Services.AddHealthChecks()
     .AddDbContextCheck<ApplicationDbContext>();
 
 var app = builder.Build();
+
+app.UseRequestLogging();
 
 app.UseGlobalExceptionHandling();
 

@@ -7,4 +7,10 @@ public static class MiddlewareExtensions
     {
         return app.UseMiddleware<ExceptionHandlingMiddleware>();
     }
+
+    public static IApplicationBuilder UseRequestLogging(
+        this IApplicationBuilder app)
+    {
+        return app.UseMiddleware<RequestLoggingMiddleware>();
+    }
 }
