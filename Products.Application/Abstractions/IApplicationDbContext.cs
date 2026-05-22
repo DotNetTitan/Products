@@ -7,8 +7,6 @@ namespace Products.Application.Abstractions
     {
         DbSet<Product> Products { get; }
 
-        DbSet<User> Users { get; }
-
         Task<int> SaveChangesAsync(
             CancellationToken cancellationToken);
     }

@@ -6,6 +6,7 @@ using Products.Application.Common.Caching;
 namespace Products.Application.Features.Products.DeleteProduct;
 
 public sealed class DeleteProductHandler(IApplicationDbContext dbContext, IMemoryCache memoryCache)
+    : ICommandHandler<DeleteProductCommand, bool>
 {
     private readonly IApplicationDbContext _dbContext = dbContext;
     private readonly IMemoryCache _memoryCache = memoryCache;

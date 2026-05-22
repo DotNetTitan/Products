@@ -7,6 +7,7 @@ using Products.Application.Features.Products.Responses;
 namespace Products.Application.Features.Products.GetProductById;
 
 public sealed class GetProductByIdHandler(IApplicationDbContext dbContext, IMemoryCache memoryCache)
+    : IQueryHandler<GetProductByIdQuery, ProductResponse?>
 {
     private readonly IApplicationDbContext _dbContext = dbContext;
     private readonly IMemoryCache _memoryCache = memoryCache;

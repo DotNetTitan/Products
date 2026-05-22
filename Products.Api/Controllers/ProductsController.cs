@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Products.Api.Filters;
+using Products.Application.Abstractions;
+using Products.Application.Common.Pagination;
 using Products.Application.Features.Products.CreateProduct;
 using Products.Application.Features.Products.DeleteProduct;
 using Products.Application.Features.Products.GetProductById;
 using Products.Application.Features.Products.GetProducts;
+using Products.Application.Features.Products.Responses;
 using Products.Application.Features.Products.UpdateProduct;
-using Products.Domain.Enums;
 
 namespace Products.Api.Controllers;
 
@@ -14,18 +15,18 @@ namespace Products.Api.Controllers;
 [Route("api/products")]
 public sealed class ProductsController : ControllerBase
 {
-    private readonly CreateProductHandler _createProductHandler;
-    private readonly GetProductsHandler _getProductsHandler;
-    private readonly GetProductByIdHandler _getProductByIdHandler;
-    private readonly UpdateProductHandler _updateProductHandler;
-    private readonly DeleteProductHandler _deleteProductHandler;
+    private readonly ICommandHandler<CreateProductCommand, CreateProductResponse> _createProductHandler;
+    private readonly IQueryHandler<GetProductsQuery, PagedResponse<ProductResponse>> _getProductsHandler;
+    private readonly IQueryHandler<GetProductByIdQuery, ProductResponse?> _getProductByIdHandler;
+    private readonly ICommandHandler<UpdateProductCommand, bool> _updateProductHandler;
+    private readonly ICommandHandler<DeleteProductCommand, bool> _deleteProductHandler;
 
     public ProductsController(
-        CreateProductHandler createProductHandler,
-        GetProductsHandler getProductsHandler,
-        GetProductByIdHandler getProductByIdHandler,
-        UpdateProductHandler updateProductHandler,
-        DeleteProductHandler deleteProductHandler)
+        ICommandHandler<CreateProductCommand, CreateProductResponse> createProductHandler,
+        IQueryHandler<GetProductsQuery, PagedResponse<ProductResponse>> getProductsHandler,
+        IQueryHandler<GetProductByIdQuery, ProductResponse?> getProductByIdHandler,
+        ICommandHandler<UpdateProductCommand, bool> updateProductHandler,
+        ICommandHandler<DeleteProductCommand, bool> deleteProductHandler)
     {
         _createProductHandler = createProductHandler;
         _getProductsHandler = getProductsHandler;
@@ -35,7 +36,6 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = nameof(Role.Admin))]
     [ServiceFilter(typeof(ValidationFilter<CreateProductCommand>))]
     public async Task<IActionResult> Create([FromBody] CreateProductCommand command, CancellationToken cancellationToken)
     {
@@ -69,7 +69,6 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpPut("{id:guid}")]
-    [Authorize(Roles = nameof(Role.Admin))]
     [ServiceFilter(typeof(ValidationFilter<UpdateProductCommand>))]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateProductCommand command, CancellationToken cancellationToken)
     {
@@ -89,7 +88,6 @@ public sealed class ProductsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    [Authorize(Roles = nameof(Role.Admin))]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         var command = new DeleteProductCommand(id);

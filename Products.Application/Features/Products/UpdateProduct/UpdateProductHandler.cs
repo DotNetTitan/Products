@@ -6,6 +6,7 @@ using Products.Application.Common.Caching;
 namespace Products.Application.Features.Products.UpdateProduct;
 
 public sealed class UpdateProductHandler(IApplicationDbContext dbContext, IMemoryCache memoryCache)
+    : ICommandHandler<UpdateProductCommand, bool>
 {
     private readonly IApplicationDbContext _dbContext = dbContext;
     private readonly IMemoryCache _memoryCache = memoryCache;

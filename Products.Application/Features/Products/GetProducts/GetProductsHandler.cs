@@ -6,6 +6,7 @@ using Products.Application.Features.Products.Responses;
 namespace Products.Application.Features.Products.GetProducts;
 
 public sealed class GetProductsHandler(IApplicationDbContext dbContext)
+    : IQueryHandler<GetProductsQuery, PagedResponse<ProductResponse>>
 {
     private readonly IApplicationDbContext _dbContext = dbContext;
 

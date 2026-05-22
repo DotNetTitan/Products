@@ -15,7 +15,6 @@ namespace Products.Infrastructure.Data
         }
 
         public DbSet<Product> Products => Set<Product>();
-        public DbSet<User> Users => Set<User>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
